@@ -1,0 +1,9 @@
+# https://github.com/mochajs/mocha/blob/v7.0.1/example/config/.mocharc.yml
+require: esm
+# reporter: dot
+bail: true
+ignore:
+  - fixtures
+  - utils
+spec:
+  - 'test.js'

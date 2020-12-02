@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "kag-parser",
+  "version": "0.0.0-pre",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "htmlparser2": "^5.0.1",
+    "mocha": "^8.2.1",
+    "prettier": "^2.2.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "watch": "mocha --watch",
+    "format": "prettier --write *.js",
+    "postversion": "git push && conventional-github-releaser -p atom -t $GITHUB_CGRT"
+  }
+}
