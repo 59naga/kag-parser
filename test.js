@@ -1,5 +1,5 @@
 import parse from "./";
-import { deepStrictEqual } from "assert";
+import { deepStrictEqual, throws } from "assert";
 
 const text1 = `
 @wait time=200
@@ -58,7 +58,7 @@ describe("吉里吉里構文解析すべき", () => {
         { type: "msg", content: "改ページしますよ。" },
         { type: "p" },
         { type: "cm" },
-        { type: "msg", content: "改ページしました。;コメントじゃないです" },
+        { type: "msg", content: "改ページしました。;コメントじゃないです" }
       ]);
     });
     it("背景を表示しよう", () => {
@@ -67,7 +67,7 @@ describe("吉里吉里構文解析すべき", () => {
         { type: "image", storage: "bg0", page: "fore", layer: "base" },
         { type: "wait", time: 200 },
         { type: "cm" },
-        { type: "msg", content: "こんにちは。" },
+        { type: "msg", content: "こんにちは。" }
       ]);
     });
     it("前景を表示しよう", () => {
@@ -83,9 +83,9 @@ describe("吉里吉里構文解析すべき", () => {
           storage: "asm",
           visible: true,
           left: 340,
-          top: 100,
+          top: 100
         },
-        { type: "msg", content: "こんにちは。" },
+        { type: "msg", content: "こんにちは。" }
       ]);
     });
     it("BGM を使おう", () => {
@@ -96,10 +96,10 @@ describe("吉里吉里構文解析すべき", () => {
         { type: "playbgm", storage: "e:3" },
         {
           type: "msg",
-          content: "再生中・・・停止するにはクリックしてください。",
+          content: "再生中・・・停止するにはクリックしてください。"
         },
         { type: "l" },
-        { type: "stopbgm" },
+        { type: "stopbgm" }
       ]);
     });
     it("効果音を使おう", () => {
@@ -110,8 +110,41 @@ describe("吉里吉里構文解析すべき", () => {
         { type: "msg", content: "効果音を鳴らします。" },
         { type: "l" },
         { type: "playse", storage: "se1.wav" },
-        { type: "ws", canskip: true },
+        { type: "ws", canskip: true }
       ]);
+    });
+  });
+});
+
+describe("Unity用のオプション", () => {
+  describe("type, propsを特定のものに制限し、propsはnullで初期化すべき", () => {
+    it("どんなtokenであれ、指定のpropsはnullで初期化すべき", () => {
+      const script = parse("foo", {
+        props: ["time", "content", "storage", "layer", "left", "top", "layer", "loop", "buf"]
+      });
+      deepStrictEqual(script, [
+        {
+          type: "msg",
+          content: "foo",
+          time: null,
+          storage: null,
+          layer: null,
+          left: null,
+          top: null,
+          loop: null,
+          buf: null
+        }
+      ]);
+    });
+    it("指定のprops以外が存在するときエラーとすべき", () => {
+      throws(() => {
+        parse("@foo bar", {
+          props: ["time", "content", "storage", "layer", "left", "top", "layer", "loop", "buf"]
+        });
+      }, {
+        name: 'Error',
+        message: '1: プロパティbarは許可されていません'
+      });
     });
   });
 });

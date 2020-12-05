@@ -1,6 +1,6 @@
 import { parseDOM } from "htmlparser2";
 
-export default (rawText) => {
+export default (rawText, options = {}) => {
   if (rawText == null) {
     return [];
   }
@@ -19,16 +19,16 @@ export default (rawText) => {
       }
       const isCoomand = text[0] === "@";
       if (isCoomand) {
-        return script.push(parseCommand(text.slice(1)));
+        return pushScript(script, parseCommand(text.slice(1)), options);
       }
 
       const isLabel = text[0] === "*";
       if (isLabel) {
-        return script.push(parseLabel(text.slice(1)));
+        return pushScript(script, parseLabel(text.slice(1)), options);
       }
 
       const chunks = parseMsg(text);
-      chunks.forEach((chunk) => script.push(chunk));
+      chunks.forEach(chunk => pushScript(script, chunk, options));
     } catch (error) {
       // エラー発生行
       throw new Error(`${lineIndex + 1}: ${error.message}`);
@@ -48,7 +48,7 @@ function parseCommand(line) {
     throw new Error("typeは予約語なので、プロパティに使用できません");
   }
   // 引用符のありなしに関わらず "200" のような数値型の値をnumberへキャスト
-  Object.keys(attribs).forEach((key) => {
+  Object.keys(attribs).forEach(key => {
     const value = attribs[key];
     if (value === "") {
       return (attribs[key] = true);
@@ -96,4 +96,24 @@ function parseMsg(text) {
   }
 
   return chunks;
+}
+
+function pushScript(script, token, options = {}) {
+  // c# class用にプロパティをnullで初期化する
+  // TODO: 型。int型にstring突っ込もうとしてエラーにならないか
+  if (options.props && options.props.length) {
+    Object.keys(token).forEach(key => {
+      const whitelist = ['type'].concat(options.props)
+      if(whitelist.indexOf(key) === -1) {
+        throw new Error(`プロパティ${key}は許可されていません`)
+      }
+    })
+    options.props.forEach(prop => {
+      if (token[prop] == null) {
+        token[prop] = null;
+      }
+    });
+  }
+
+  script.push(token);
 }
