@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "kag-parser",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "dependencies": {
     "esm": "^3.2.25",
     "htmlparser2": "^5.0.1",
