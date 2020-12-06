@@ -137,14 +137,35 @@ describe("Unity用のオプション", () => {
       ]);
     });
     it("指定のprops以外が存在するときエラーとすべき", () => {
-      throws(() => {
-        parse("@foo bar", {
-          props: ["time", "content", "storage", "layer", "left", "top", "layer", "loop", "buf"]
-        });
-      }, {
-        name: 'Error',
-        message: '1: プロパティbarは許可されていません'
+      throws(
+        () => {
+          parse("@foo bar", {
+            props: ["time", "content", "storage", "layer", "left", "top", "layer", "loop", "buf"]
+          });
+        },
+        {
+          name: "Error",
+          message: "1: プロパティbarは許可されていません"
+        }
+      );
+    });
+    it("値は常にstringかnullで初期化すべき", () => {
+      const script = parse("@foo time=1", {
+        props: ["time", "content", "storage", "layer", "left", "top", "layer", "loop", "buf"]
       });
+      deepStrictEqual(script, [
+        {
+          type: "foo",
+          content: null,
+          time: "1",
+          storage: null,
+          layer: null,
+          left: null,
+          top: null,
+          loop: null,
+          buf: null
+        }
+      ]);
     });
   });
 });

@@ -99,19 +99,17 @@ function parseMsg(text) {
 }
 
 function pushScript(script, token, options = {}) {
-  // c# class用にプロパティをnullで初期化する
+  // c# class用にプロパティをnull/stringで初期化する
   // TODO: 型。int型にstring突っ込もうとしてエラーにならないか
   if (options.props && options.props.length) {
     Object.keys(token).forEach(key => {
-      const whitelist = ['type'].concat(options.props)
-      if(whitelist.indexOf(key) === -1) {
-        throw new Error(`プロパティ${key}は許可されていません`)
+      const whitelist = ["type"].concat(options.props);
+      if (whitelist.indexOf(key) === -1) {
+        throw new Error(`プロパティ${key}は許可されていません`);
       }
-    })
+    });
     options.props.forEach(prop => {
-      if (token[prop] == null) {
-        token[prop] = null;
-      }
+      token[prop] = token[prop] == null ? null : String(token[prop]);
     });
   }
 
