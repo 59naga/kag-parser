@@ -76,7 +76,8 @@ function parseMsg(text) {
 
   let openTag = -1;
   let closeTag = 0;
-  for (let i = 0; i < text.length; i++) {
+  let i
+  for (i = 0; i < text.length; i++) {
     if (text[i] === "[" && text[i - 1] !== "\\") {
       openTag = i;
       const content = text.slice(closeTag, i);
@@ -91,8 +92,9 @@ function parseMsg(text) {
       }
     }
   }
-  if (!chunks.length) {
-    chunks.push({ type: "msg", content: text });
+  // その行にタグが全く無かった、もしくは閉じタグ以降に文字が存在していた場合
+  if (!chunks.length || closeTag < i) {
+    chunks.push({ type: "msg", content: text.slice(closeTag) });
   }
 
   return chunks;

@@ -10,8 +10,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "watch": "mocha --watch",
-    "format": "prettier --write *.js",
+    "hot": "mocha --watch",
     "postversion": "git push && conventional-github-releaser -p atom -t $GITHUB_CGRT"
   }
 }
