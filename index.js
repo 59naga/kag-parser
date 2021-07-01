@@ -27,7 +27,7 @@ export default (rawText, options = {}) => {
         return pushScript(script, parseLabel(text.slice(1)), options);
       }
 
-      const chunks = parseMsg(text);
+      const chunks = parseMsg(text, options);
       chunks.forEach(chunk => pushScript(script, chunk, options));
     } catch (error) {
       // エラー発生行
@@ -71,7 +71,7 @@ function parseLabel(line) {
   return { type: 'label', name, title };
 }
 
-function parseMsg(text) {
+function parseMsg(text, options = {}) {
   const chunks = [];
 
   let openTag = -1;
@@ -79,6 +79,11 @@ function parseMsg(text) {
   let i;
   for (i = 0; i < text.length; i++) {
     if (text[i] === '[' && text[i - 1] !== '\\') {
+      const [type] = text.slice(i + 1).match(/^\w+/);
+      if (options.ignoreTypes && options.ignoreTypes.indexOf(type) > -1) {
+        continue;
+      }
+
       openTag = i;
       const content = text.slice(closeTag, i);
       if (content.length) {
@@ -86,7 +91,7 @@ function parseMsg(text) {
       }
     }
     if (text[i] === ']' && text[i - 1] !== '\\') {
-      closeTag = i + 1;
+      closeTag = openTag > -1 ? i + 1 : 0;
       if (openTag > -1) {
         chunks.push(parseCommand(text.slice(openTag + 1, i)));
       }

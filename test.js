@@ -136,6 +136,23 @@ describe('issues', () => {
       { type: 'p' }
     ]);
   });
+  it('pj-rei/api#12', () => {
+    const script = parse(
+      `
+; [ruby]x4 直後の1文字にルビを振ります。
+[ruby text="も"]文
+[ruby text="じ"]字に[ruby text="す"]好きなルビを
+[ruby text="ふ"]振ることができるよ。[p]
+`,
+      { ignoreTypes: ['ruby'] }
+    );
+    deepStrictEqual(script, [
+      { type: 'msg', content: '[ruby text="も"]文' },
+      { type: 'msg', content: '[ruby text="じ"]字に[ruby text="す"]好きなルビを' },
+      { type: 'msg', content: '[ruby text="ふ"]振ることができるよ。' },
+      { type: 'p' }
+    ]);
+  });
 });
 
 describe('Unity用のオプション', () => {
